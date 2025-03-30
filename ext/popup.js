@@ -31,10 +31,26 @@ function populateUnitDropdowns(category) {
     });
 }
 
+// Format timestamp to relative time
+function formatRelativeTime(timestamp) {
+    const diff = Date.now() - timestamp;
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (days > 0) return `${days}d ago`;
+    if (hours > 0) return `${hours}h ago`;
+    if (minutes > 0) return `${minutes}m ago`;
+    return 'just now';
+}
+
 // Save conversion to history
 function saveToHistory(value, category, fromUnit, toUnit, result) {
     chrome.storage.local.get('conversionHistory', (data) => {
         const history = data.conversionHistory || [];
+        
+        // Add new entry at the beginning
         history.unshift({
             value,
             category,
@@ -45,9 +61,11 @@ function saveToHistory(value, category, fromUnit, toUnit, result) {
         });
 
         // Keep only last 20 entries
-        history.splice(20);
+        const trimmedHistory = history.slice(0, 20);
 
-        chrome.storage.local.set({ conversionHistory: history }, updateHistoryDisplay);
+        chrome.storage.local.set({ 
+            conversionHistory: trimmedHistory 
+        }, updateHistoryDisplay);
     });
 }
 
@@ -57,12 +75,57 @@ function updateHistoryDisplay() {
         const historyList = document.getElementById('historyList');
         const history = data.conversionHistory || [];
 
+        if (history.length === 0) {
+            historyList.innerHTML = '<div class="history-item">No conversions yet</div>';
+            return;
+        }
+
         historyList.innerHTML = history.map(item => `
-            <div class="history-item">
-                ${item.value} ${item.fromUnit} = ${formatResult(item.result)} ${item.toUnit}
+            <div class="history-item" data-timestamp="${item.timestamp}">
+                <div class="conversion-text">
+                    ${item.value} ${item.fromUnit} = ${formatResult(item.result)} ${item.toUnit}
+                </div>
+                <div class="timestamp" title="${new Date(item.timestamp).toLocaleString()}">
+                    ${formatRelativeTime(item.timestamp)}
+                </div>
             </div>
         `).join('');
+
+        // Add click handlers to history items
+        historyList.querySelectorAll('.history-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const conversion = history.find(h => h.timestamp === parseInt(item.dataset.timestamp));
+                if (conversion) {
+                    populateFromHistory(conversion);
+                }
+            });
+        });
     });
+}
+
+// Populate form with historical conversion
+function populateFromHistory(conversion) {
+    const categorySelect = document.getElementById('categorySelect');
+    const valueInput = document.getElementById('valueInput');
+    const fromUnit = document.getElementById('fromUnit');
+    const toUnit = document.getElementById('toUnit');
+
+    categorySelect.value = conversion.category;
+    populateUnitDropdowns(conversion.category);
+    valueInput.value = conversion.value;
+    fromUnit.value = conversion.fromUnit;
+    toUnit.value = conversion.toUnit;
+}
+
+// Clear all conversion history
+function clearHistory() {
+    if (confirm('Are you sure you want to clear all conversion history?')) {
+        chrome.storage.local.set({ 
+            conversionHistory: [] 
+        }, () => {
+            updateHistoryDisplay();
+        });
+    }
 }
 
 // Initialize popup
@@ -75,6 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const convertBtn = document.getElementById('convertBtn');
     const result = document.getElementById('result');
     const settingsBtn = document.getElementById('settingsBtn');
+    const clearHistoryBtn = document.getElementById('clearHistoryBtn');
 
     // Load initial history
     updateHistoryDisplay();
@@ -126,4 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
             convertBtn.click();
         }
     });
+
+    // Clear history button handler
+    clearHistoryBtn.addEventListener('click', clearHistory);
 });
