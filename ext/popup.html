@@ -1,0 +1,53 @@
+omeext\popup.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Everything Converter</title>
+    <style>
+        body {
+            width: 300px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Everything Converter</h1>
+        <button id="settingsBtn">⚙️</button>
+    </header>
+
+    <main>
+        <div class="conversion-input">
+            <input type="number" id="valueInput" placeholder="Enter value">
+            <select id="categorySelect">
+                <option value="">Select category</option>
+                <option value="length">Length</option>
+                <option value="weight">Weight</option>
+                <option value="temperature">Temperature</option>
+                <option value="volume">Volume</option>
+                <option value="speed">Speed</option>
+                <option value="area">Area</option>
+            </select>
+            <select id="fromUnit">
+                <option value="">From unit</option>
+            </select>
+            <button id="switchUnits">⇄</button>
+            <select id="toUnit">
+                <option value="">To unit</option>
+            </select>
+            <button id="convertBtn">Convert</button>
+        </div>
+
+        <div id="result" class="result-section"></div>
+
+        <div class="history-section">
+            <h3>Recent Conversions</h3>
+            <div id="historyList"></div>
+        </div>
+    </main>
+
+    <script src="conversion.js"></script>
+</body>
+</html>

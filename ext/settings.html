@@ -1,0 +1,54 @@
+ext\settings.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Everything Converter Settings</title>
+</head>
+<body>
+    <h1>Settings</h1>
+    
+    <section id="generalSettings">
+        <h2>General Settings</h2>
+        <div>
+            <label for="defaultCategory">Default Category:</label>
+            <select id="defaultCategory">
+                <option value="length">Length</option>
+                <option value="weight">Weight</option>
+                <option value="temperature">Temperature</option>
+                <option value="volume">Volume</option>
+                <option value="speed">Speed</option>
+                <option value="area">Area</option>
+            </select>
+        </div>
+        <div>
+            <label>
+                <input type="checkbox" id="enableHistory" checked>
+                Enable conversion history
+            </label>
+        </div>
+    </section>
+
+    <section id="appearanceSettings">
+        <h2>Appearance</h2>
+        <div>
+            <label>
+                <input type="radio" name="theme" value="light" checked>
+                Light Mode
+            </label>
+            <label>
+                <input type="radio" name="theme" value="dark">
+                Dark Mode
+            </label>
+        </div>
+    </section>
+
+    <div class="actions">
+        <button id="saveSettings">Save Settings</button>
+        <button id="resetSettings">Reset to Defaults</button>
+    </div>
+
+    <script src="settings.js"></script>
+</body>
+</html>
