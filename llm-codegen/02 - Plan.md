@@ -251,3 +251,13 @@ Integrate all components of the Everything Converter extension. Ensure that:
 - There are no orphaned pieces of code—each module builds on previous steps and is wired together.
 Provide a summary of any additional integration steps or final testing instructions, and output a final integration guide.
 ```
+
+### Improvement and Bugs
+
+1. Inside popup.html:
+- Move "Category" dropdown to above "From unit" and "value"
+- Align the size of the "value" field to align witht the rest of the fields
+- Reduce the size of the Setting button and expand the "Everything Converter" title
+- Reduce the size of the "Clear History" button and expand the "Recent Conversion" title
+
+2. 
