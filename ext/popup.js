@@ -194,3 +194,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Clear history button handler
     clearHistoryBtn.addEventListener('click', clearHistory);
 });
+
+// Load and apply theme on popup open
+document.addEventListener('DOMContentLoaded', async () => {
+    const { theme } = await chrome.storage.sync.get({ theme: 'light' });
+    document.documentElement.setAttribute('data-theme', theme);
+});

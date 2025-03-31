@@ -125,6 +125,35 @@ function startRecordingShortcut(inputElement) {
     document.addEventListener('keydown', keyHandler);
 }
 
+// Apply theme to all extension pages
+async function applyTheme(theme) {
+    // Set theme for current page
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // Store theme preference
+    await chrome.storage.sync.set({ theme });
+
+    // Update theme in popup if open
+    const views = chrome.extension.getViews({ type: 'popup' });
+    views.forEach(view => {
+        view.document.documentElement.setAttribute('data-theme', theme);
+    });
+}
+
+// Handle theme changes
+document.querySelectorAll('input[name="theme"]').forEach(radio => {
+    radio.addEventListener('change', (e) => {
+        applyTheme(e.target.value);
+    });
+});
+
+// Load and apply theme on page load
+document.addEventListener('DOMContentLoaded', async () => {
+    const { theme } = await chrome.storage.sync.get({ theme: 'light' });
+    document.documentElement.setAttribute('data-theme', theme);
+    document.querySelector(`input[name="theme"][value="${theme}"]`).checked = true;
+});
+
 // Event listeners
 document.addEventListener('DOMContentLoaded', loadSettings);
 elements.defaultCategory.addEventListener('change', e => updateUnitDropdowns(e.target.value));

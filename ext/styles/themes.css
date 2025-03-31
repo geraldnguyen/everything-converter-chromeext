@@ -1,0 +1,51 @@
+:root[data-theme="light"] {
+    --bg-color: #ffffff;
+    --text-color: #000000;
+    --border-color: #eee;
+    --input-bg: #ffffff;
+    --button-bg: #f0f0f0;
+    --button-text: #000000;
+    --primary-color: #4CAF50;
+    --primary-text: #ffffff;
+    --section-bg: #ffffff;
+}
+
+:root[data-theme="dark"] {
+    --bg-color: #1e1e1e;
+    --text-color: #ffffff;
+    --border-color: #333;
+    --input-bg: #2d2d2d;
+    --button-bg: #383838;
+    --button-text: #ffffff;
+    --primary-color: #45a049;
+    --primary-text: #ffffff;
+    --section-bg: #2d2d2d;
+}
+
+/* Common theme styles */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+section {
+    background-color: var(--section-bg);
+    border-color: var(--border-color);
+}
+
+input, select {
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+button {
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: 1px solid var(--border-color);
+}
+
+#saveSettings {
+    background-color: var(--primary-color);
+    color: var(--primary-text);
+}
