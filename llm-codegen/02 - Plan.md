@@ -267,3 +267,5 @@ Provide a summary of any additional integration steps or final testing instructi
 4. Bug: Enable conversion history setting not followed: all conversions are recorded
 
 5. When concersion history is enabled, the conversion performed should immediately visble under "Recent conversions" section. 
+
+6. Bug: 100000 is formatted as 1

@@ -117,10 +117,33 @@ function convert(value, category, fromUnit, toUnit) {
 * @returns {string} Formatted value
 */
 function formatResult(value) {
-  if (Math.abs(value) < 0.01) {
-      return value.toExponential(4);
-  }
-  return value.toPrecision(6).replace(/\.?0+$/, '');
+    // Handle zero
+    if (value === 0) return '0';
+
+    const absValue = Math.abs(value);
+
+    // Very small numbers: use scientific notation
+    if (absValue < 0.01) {
+        return value.toExponential(4);
+    }
+
+    // Large numbers: preserve all digits before decimal point
+    if (absValue >= 1000) {
+        // Use fixed notation for integers
+        if (Number.isInteger(value)) {
+            return value.toString();
+        }
+        // Round to 2 decimal places for large decimals
+        return value.toFixed(2).replace(/\.?0+$/, '');
+    }
+
+    // Numbers between 0.01 and 999.999
+    // Use up to 6 significant digits, but remove trailing zeros
+    const formatted = value.toPrecision(6);
+    return formatted
+        .replace(/\.?0+e/, 'e') // Remove trailing zeros before exponent
+        .replace(/\.?0+$/, '') // Remove trailing zeros after decimal
+        .replace(/(\.\d*[1-9])0+$/, '$1'); // Keep significant trailing digits
 }
 
 /**

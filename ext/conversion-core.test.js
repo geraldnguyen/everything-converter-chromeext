@@ -88,4 +88,25 @@ describe('Unit Converter Core Functions', () => {
       expect(isValidConversion('invalid', 'm', 'ft')).toBe(false);
     });
   });
+
+  describe('Number Formatting', () => {
+    test.each([
+        // [input, expected]
+        [0, '0'],                   // Zero
+        [100000, '100000'],         // Large integer
+        [100000.5, '100000.50'],    // Large number with decimals
+        [1234.5678, '1234.57'],     // Large number rounded
+        [123.456789, '123.457'],    // Medium number rounded
+        [1.23456789, '1.23457'],    // Regular number
+        [0.123456789, '0.123457'],  // Small number
+        [0.001234, '1.234e-3'],     // Very small number
+        [0.00001234, '1.234e-5'],   // Tiny number
+        [-123.456, '-123.456'],     // Negative numbers
+        [1.230, '1.23'],            // Remove trailing zeros
+        [1.0, '1'],                 // Integer with decimal
+        [1000.0, '1000'],           // Large integer with decimal
+    ])('formats %f as %s', (input, expected) => {
+        expect(formatResult(input)).toBe(expected);
+    });
+  });
 });
