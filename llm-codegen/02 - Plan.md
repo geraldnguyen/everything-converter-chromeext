@@ -265,3 +265,5 @@ Provide a summary of any additional integration steps or final testing instructi
 3. Bug: Appearance (light mode, dark mode) is not reflected after setting updated
 
 4. Bug: Enable conversion history setting not followed: all conversions are recorded
+
+5. When concersion history is enabled, the conversion performed should immediately visble under "Recent conversions" section. 

@@ -1,5 +1,9 @@
-import { convert, getUnitsForCategory } from './conversion-core.js';
-import { convert, formatResult, saveToHistoryIfEnabled } from './conversion-core.js';
+import { 
+    convert, 
+    formatResult, 
+    getUnitsForCategory, 
+    saveToHistoryIfEnabled 
+} from './conversion-core.js';
 
 // Regular expression to match number and unit pattern (e.g., "10 kg", "5.2km")
 const VALUE_UNIT_REGEX = /^(-?\d*\.?\d+)\s*([a-zA-Z°³²]+)$/;

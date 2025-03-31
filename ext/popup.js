@@ -1,20 +1,16 @@
-import { convert, formatResult, getUnitsForCategory, saveToHistoryIfEnabled } from './conversion-core.js';
-
-// Unit mappings for each category
-const unitCategoryMap = {
-    length: ["mm", "cm", "m", "km", "in", "ft", "yd", "mi"],
-    weight: ["g", "kg", "t", "oz", "lb", "st"],
-    temperature: ["°C", "°F", "K"],
-    volume: ["ml", "l", "m³", "tsp", "tbsp", "fl oz", "cup", "pt", "qt", "gal", "in³"],
-    speed: ["m/s", "km/h", "mph", "ft/s", "knots"],
-    area: ["mm²", "cm²", "m²", "ha", "km²", "in²", "ft²", "yd²", "acres", "mi²"]
-};
+import { 
+    convert, 
+    formatResult, 
+    getUnitsForCategory, 
+    isHistoryEnabled, 
+    saveToHistoryIfEnabled 
+} from './conversion-core.js';
 
 // Populate unit dropdowns based on selected category
 function populateUnitDropdowns(category) {
     const fromUnit = document.getElementById('fromUnit');
     const toUnit = document.getElementById('toUnit');
-    const units = unitCategoryMap[category] || [];
+    const units = getUnitsForCategory(category) || [];
 
     [fromUnit, toUnit].forEach(select => {
         const currentValue = select.value;
@@ -172,13 +168,18 @@ document.addEventListener('DOMContentLoaded', () => {
             result.classList.remove('error');
 
             // Save to history only if enabled
-            await saveToHistoryIfEnabled({
-                value,
-                category,
-                fromUnit: fromUnit.value,
-                toUnit: toUnit.value,
-                result: convertedValue
-            });
+            const isEnabled = await isHistoryEnabled();
+            if (isEnabled) {
+                await saveToHistoryIfEnabled({
+                    value,
+                    category,
+                    fromUnit: fromUnit.value,
+                    toUnit: toUnit.value,
+                    result: convertedValue
+                });
+                // Immediately update history display
+                updateHistoryDisplay();
+            }
         } catch (error) {
             result.textContent = `Error: ${error.message}`;
             result.classList.add('error');
