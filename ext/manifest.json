@@ -5,8 +5,9 @@
   "description": "A versatile unit conversion tool supporting length, weight, temperature, volume, speed, and area conversions",
   "permissions": [
     "contextMenus",
-    "storage",
-    "activeTab"
+    "activeTab",
+    "scripting",
+    "storage"
   ],
   "action": {
     "default_popup": "popup.html",
