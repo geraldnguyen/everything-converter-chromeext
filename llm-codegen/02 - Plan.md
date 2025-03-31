@@ -263,3 +263,5 @@ Provide a summary of any additional integration steps or final testing instructi
 2. Inside popup.html: The Setting and Clear History buttons are still large. Reduce their width to maximum 30% of available space
 
 3. Bug: Appearance (light mode, dark mode) is not reflected after setting updated
+
+4. Bug: Enable conversion history setting not followed: all conversions are recorded

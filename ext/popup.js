@@ -1,4 +1,4 @@
-import { convert, formatResult, getUnitsForCategory } from './conversion-core.js';
+import { convert, formatResult, getUnitsForCategory, saveToHistoryIfEnabled } from './conversion-core.js';
 
 // Unit mappings for each category
 const unitCategoryMap = {
@@ -156,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Convert button handler
-    convertBtn.addEventListener('click', () => {
+    convertBtn.addEventListener('click', async () => {
         try {
             // Validate inputs
             if (!valueInput.value || !categorySelect.value || !fromUnit.value || !toUnit.value) {
@@ -171,8 +171,14 @@ document.addEventListener('DOMContentLoaded', () => {
             result.textContent = `${value} ${fromUnit.value} = ${formatResult(convertedValue)} ${toUnit.value}`;
             result.classList.remove('error');
 
-            // Save to history
-            saveToHistory(value, category, fromUnit.value, toUnit.value, convertedValue);
+            // Save to history only if enabled
+            await saveToHistoryIfEnabled({
+                value,
+                category,
+                fromUnit: fromUnit.value,
+                toUnit: toUnit.value,
+                result: convertedValue
+            });
         } catch (error) {
             result.textContent = `Error: ${error.message}`;
             result.classList.add('error');
@@ -200,3 +206,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     const { theme } = await chrome.storage.sync.get({ theme: 'light' });
     document.documentElement.setAttribute('data-theme', theme);
 });
+
+// Update history display based on setting
+async function updateHistoryVisibility() {
+    const historySection = document.querySelector('.history-section');
+    const isEnabled = await isHistoryEnabled();
+    historySection.style.display = isEnabled ? 'block' : 'none';
+}
+
+// Listen for history setting changes
+chrome.storage.onChanged.addListener((changes, area) => {
+    if (area === 'sync' && changes.enableHistory) {
+        updateHistoryVisibility();
+    }
+});
+
+// Check history visibility on popup open
+document.addEventListener('DOMContentLoaded', updateHistoryVisibility);

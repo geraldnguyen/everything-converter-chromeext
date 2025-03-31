@@ -169,6 +169,37 @@ export const defaultSettings = {
     }
 };
 
+/**
+ * Checks if history recording is enabled
+ * @returns {Promise<boolean>} Whether history is enabled
+ */
+export async function isHistoryEnabled() {
+    const { enableHistory } = await chrome.storage.sync.get({ enableHistory: true });
+    return enableHistory;
+}
+
+/**
+ * Saves conversion to history if enabled
+ * @param {object} conversion - Conversion details to save
+ * @returns {Promise<void>}
+ */
+export async function saveToHistoryIfEnabled(conversion) {
+    if (!(await isHistoryEnabled())) {
+        return;
+    }
+
+    const { conversionHistory = [] } = await chrome.storage.local.get('conversionHistory');
+    conversionHistory.unshift({
+        ...conversion,
+        timestamp: Date.now()
+    });
+    
+    // Keep only last 20 entries
+    conversionHistory.splice(20);
+    
+    await chrome.storage.local.set({ conversionHistory });
+}
+
 // Export functions for use in other modules
 export {
   convert,

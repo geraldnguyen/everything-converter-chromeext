@@ -1,4 +1,5 @@
 import { convert, getUnitsForCategory } from './conversion-core.js';
+import { convert, formatResult, saveToHistoryIfEnabled } from './conversion-core.js';
 
 // Regular expression to match number and unit pattern (e.g., "10 kg", "5.2km")
 const VALUE_UNIT_REGEX = /^(-?\d*\.?\d+)\s*([a-zA-Z°³²]+)$/;
@@ -58,6 +59,16 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
             // Perform conversion
             const result = convert(value, category, unit, targetUnit);
             
+            // Save inline conversion to history if enabled
+            await saveToHistoryIfEnabled({
+                value,
+                category,
+                fromUnit: unit,
+                toUnit: targetUnit,
+                result: convertedValue,
+                source: 'inline'
+            });
+
             // Display result
             await showConversionResult(tab.id, {
                 originalValue: value,
