@@ -260,4 +260,4 @@ Provide a summary of any additional integration steps or final testing instructi
 - Reduce the size of the Setting button and expand the "Everything Converter" title
 - Reduce the size of the "Clear History" button and expand the "Recent Conversion" title
 
-2. 
+2. Inside popup.html: The Setting and Clear History buttons are still large. Reduce their width to maximum 30% of available space

@@ -22,6 +22,9 @@
             font-size: 1.4rem;
             margin: 0;
             flex-grow: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         #settingsBtn {
@@ -30,7 +33,9 @@
             border: none;
             cursor: pointer;
             font-size: 1rem;
-            margin-left: 0px;
+            margin-left: 8px;
+            width: 30px; /* Fixed width for settings button */
+            flex-shrink: 0;
         }
 
         .conversion-input {
@@ -98,6 +103,9 @@
             font-size: 1.1rem;
             margin: 0;
             flex-grow: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .history-list {
@@ -135,8 +143,9 @@
             border: none;
             cursor: pointer;
             font-size: 0.9rem;
-            margin-left: 0px;
-            opacity: 0.7;
+            margin-left: 8px;
+            width: 30px; /* Fixed width for clear history button */
+            flex-shrink: 0;
         }
 
         #clearHistoryBtn:hover {
