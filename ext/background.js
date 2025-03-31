@@ -95,7 +95,7 @@ async function showUnitSelectionPopup(tabId, units, currentUnit) {
     // Filter out the current unit
     const availableUnits = units.filter(u => u !== currentUnit);
     
-    // Inject popup HTML
+    // Inject popup CSS
     await chrome.scripting.insertCSS({
         target: { tabId },
         css: `
@@ -113,22 +113,23 @@ async function showUnitSelectionPopup(tabId, units, currentUnit) {
         `
     });
 
-    await chrome.scripting.executeScript({
+    // Execute script and get result
+    const results = await chrome.scripting.executeScript({
         target: { tabId },
         function: (units) => {
-            const popup = document.createElement('div');
-            popup.className = 'converter-popup';
-            popup.innerHTML = `
-                <select id="targetUnit">
-                    <option value="">Select target unit</option>
-                    ${units.map(u => `<option value="${u}">${u}</option>`).join('')}
-                </select>
-                <button id="convertBtn">Convert</button>
-                <button id="cancelBtn">Cancel</button>
-            `;
-            document.body.appendChild(popup);
-
             return new Promise(resolve => {
+                const popup = document.createElement('div');
+                popup.className = 'converter-popup';
+                popup.innerHTML = `
+                    <select id="targetUnit">
+                        <option value="">Select target unit</option>
+                        ${units.map(u => `<option value="${u}">${u}</option>`).join('')}
+                    </select>
+                    <button id="convertBtn">Convert</button>
+                    <button id="cancelBtn">Cancel</button>
+                `;
+                document.body.appendChild(popup);
+
                 document.getElementById('convertBtn').onclick = () => {
                     const selected = document.getElementById('targetUnit').value;
                     popup.remove();
@@ -142,6 +143,9 @@ async function showUnitSelectionPopup(tabId, units, currentUnit) {
         },
         args: [availableUnits]
     });
+
+    // Return the result from the injected script
+    return results[0].result;
 }
 
 // Show conversion result
