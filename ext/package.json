@@ -1,0 +1,21 @@
+{
+  "name": "everything-converter",
+  "version": "1.0.0",
+  "description": "Chrome extension for unit conversions",
+  "main": "background.js",
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.config.js",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.config.js --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.26.10",
+    "@babel/preset-env": "^7.26.9",
+    "@types/jest": "^29.5.14",
+    "babel-jest": "^29.7.0",
+    "jest": "^29.7.0"
+  },
+  "type": "module"
+}

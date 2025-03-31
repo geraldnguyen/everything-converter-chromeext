@@ -129,10 +129,7 @@ function formatResult(value) {
 * @returns {string[]} Array of available units
 */
 function getUnitsForCategory(category) {
-  if (category === 'temperature') {
-      return ['°C', '°F', 'K'];
-  }
-  return Object.keys(conversionFactors[category] || {});
+  return unitCategoryMap[category] || [];
 }
 
 /**
@@ -149,6 +146,28 @@ function isValidConversion(category, fromUnit, toUnit) {
   const factors = conversionFactors[category];
   return factors && factors[fromUnit] && factors[toUnit];
 }
+
+// Export conversion factors and functions for use across components
+export const unitCategoryMap = {
+    length: ["mm", "cm", "m", "km", "in", "ft", "yd", "mi"],
+    weight: ["g", "kg", "t", "oz", "lb", "st"],
+    temperature: ["°C", "°F", "K"],
+    volume: ["ml", "l", "m³", "tsp", "tbsp", "fl oz", "cup", "pt", "qt", "gal", "in³"],
+    speed: ["m/s", "km/h", "mph", "ft/s", "knots"],
+    area: ["mm²", "cm²", "m²", "ha", "km²", "in²", "ft²", "yd²", "acres", "mi²"]
+};
+
+export const defaultSettings = {
+    defaultCategory: 'length',
+    defaultFromUnit: 'm',
+    defaultToUnit: 'ft',
+    enableHistory: true,
+    theme: 'light',
+    shortcuts: {
+        popup: 'Ctrl+Shift+C',
+        inline: 'Alt+C'
+    }
+};
 
 // Export functions for use in other modules
 export {

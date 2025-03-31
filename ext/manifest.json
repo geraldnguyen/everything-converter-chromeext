@@ -2,12 +2,12 @@
   "manifest_version": 3,
   "name": "Everything Converter",
   "version": "1.0.0",
-  "description": "A versatile unit conversion tool supporting length, weight, temperature, volume, speed, and area conversions",
+  "description": "A versatile unit conversion tool supporting multiple categories",
   "permissions": [
     "contextMenus",
+    "storage",
     "activeTab",
-    "scripting",
-    "storage"
+    "scripting"
   ],
   "action": {
     "default_popup": "popup.html",
