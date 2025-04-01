@@ -2,7 +2,8 @@ import {
     convert, 
     formatResult, 
     getUnitsForCategory, 
-    saveToHistoryIfEnabled 
+    saveToHistoryIfEnabled,
+    defaultSettings 
 } from './conversion-core.js';
 
 // Regular expression to match number and unit pattern (e.g., "10 kg", "5.2km")
@@ -107,6 +108,9 @@ function parseSelection(text) {
 
 // Show popup for target unit selection
 async function showUnitSelectionPopup(tabId, units, currentUnit) {
+    // Get default settings
+    const settings = await chrome.storage.sync.get(defaultSettings);
+    
     // Filter out the current unit
     const availableUnits = units.filter(u => u !== currentUnit);
     
@@ -131,14 +135,16 @@ async function showUnitSelectionPopup(tabId, units, currentUnit) {
     // Execute script and get result
     const results = await chrome.scripting.executeScript({
         target: { tabId },
-        function: (units) => {
+        function: (units, defaultUnit) => {
             return new Promise(resolve => {
                 const popup = document.createElement('div');
                 popup.className = 'converter-popup';
                 popup.innerHTML = `
                     <select id="targetUnit">
                         <option value="">Select target unit</option>
-                        ${units.map(u => `<option value="${u}">${u}</option>`).join('')}
+                        ${units.map(u => 
+                            `<option value="${u}" ${u === defaultUnit ? 'selected' : ''}>${u}</option>`
+                        ).join('')}
                     </select>
                     <button id="convertBtn">Convert</button>
                     <button id="cancelBtn">Cancel</button>
@@ -156,10 +162,9 @@ async function showUnitSelectionPopup(tabId, units, currentUnit) {
                 };
             });
         },
-        args: [availableUnits]
+        args: [availableUnits, settings.defaultToUnit]
     });
 
-    // Return the result from the injected script
     return results[0].result;
 }
 

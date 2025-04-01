@@ -2,28 +2,34 @@ import {
     convert, 
     formatResult, 
     getUnitsForCategory, 
+    defaultSettings, 
     isHistoryEnabled, 
     saveToHistoryIfEnabled 
 } from './conversion-core.js';
 
 // Populate unit dropdowns based on selected category
-function populateUnitDropdowns(category) {
+async function populateUnitDropdowns(units) {
+    if (!Array.isArray(units)) {
+        console.error('Invalid units array:', units);
+        units = [];
+    }
+
+    const settings = await chrome.storage.sync.get(defaultSettings);
     const fromUnit = document.getElementById('fromUnit');
     const toUnit = document.getElementById('toUnit');
-    const units = getUnitsForCategory(category) || [];
-
-    [fromUnit, toUnit].forEach(select => {
+    
+    [fromUnit, toUnit].forEach((select, index) => {
         const currentValue = select.value;
-        select.innerHTML = '<option value="">Select unit</option>';
-        units.forEach(unit => {
-            const option = document.createElement('option');
-            option.value = unit;
-            option.textContent = unit;
-            select.appendChild(option);
-        });
-        if (units.includes(currentValue)) {
-            select.value = currentValue;
-        }
+        const defaultValue = index === 0 ? settings.defaultFromUnit : settings.defaultToUnit;
+        
+        select.innerHTML = units.map(unit => 
+            `<option value="${unit}">${unit}</option>`
+        ).join('');
+        
+        // Try to keep current selection, fall back to default, then first unit
+        select.value = units.includes(currentValue) ? currentValue : 
+                      units.includes(defaultValue) ? defaultValue : 
+                      units[0] || '';
     });
 }
 
@@ -125,7 +131,7 @@ function clearHistory() {
 }
 
 // Initialize popup
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const categorySelect = document.getElementById('categorySelect');
     const valueInput = document.getElementById('valueInput');
     const fromUnit = document.getElementById('fromUnit');
@@ -139,9 +145,24 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load initial history
     updateHistoryDisplay();
 
+    // Load user settings
+    const settings = await chrome.storage.sync.get(defaultSettings);
+
+    // Set default category
+    categorySelect.value = settings.defaultCategory;
+    
+    // Populate unit dropdowns
+    const units = getUnitsForCategory(settings.defaultCategory);
+    await populateUnitDropdowns(units);
+
+    // Set default units
+    fromUnit.value = settings.defaultFromUnit;
+    toUnit.value = settings.defaultToUnit;
+
     // Category change handler
     categorySelect.addEventListener('change', () => {
-        populateUnitDropdowns(categorySelect.value);
+        const units = getUnitsForCategory(categorySelect.value);
+        populateUnitDropdowns(units);
     });
 
     // Switch units button handler

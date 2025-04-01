@@ -269,3 +269,5 @@ Provide a summary of any additional integration steps or final testing instructi
 5. When concersion history is enabled, the conversion performed should immediately visble under "Recent conversions" section. 
 
 6. Bug: 100000 is formatted as 1
+
+7. Bug: "Default From Unit" and "Default To Unit" not used in popup and inline conversion.
