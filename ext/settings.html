@@ -59,12 +59,6 @@
             border: 1px solid #ccc;
         }
 
-        .shortcut-input {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
         .category-defaults {
             margin-bottom: 20px;
             padding: 15px;
@@ -91,6 +85,13 @@
             margin: 0 0 10px 0;
             font-size: 1.1rem;
             color: #333;
+        }
+
+        /* Remove shortcut-related styles */
+        .shortcut-input,
+        #recordPopupShortcut,
+        #recordInlineShortcut {
+            display: none;
         }
     </style>
 </head>
@@ -120,24 +121,6 @@
                 </div>
             </div>
             <!-- Repeated for other categories -->
-        </div>
-    </section>
-
-    <section id="shortcutSettings">
-        <h2>Keyboard Shortcuts</h2>
-        <div class="setting-group">
-            <label for="popupShortcut">Open Popup:</label>
-            <div class="shortcut-input">
-                <input type="text" id="popupShortcut" placeholder="e.g., Ctrl+Shift+C" readonly>
-                <button id="recordPopupShortcut">Record</button>
-            </div>
-        </div>
-        <div class="setting-group">
-            <label for="inlineShortcut">Inline Conversion:</label>
-            <div class="shortcut-input">
-                <input type="text" id="inlineShortcut" placeholder="e.g., Alt+C" readonly>
-                <button id="recordInlineShortcut">Record</button>
-            </div>
         </div>
     </section>
 

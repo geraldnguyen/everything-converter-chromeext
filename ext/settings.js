@@ -18,10 +18,6 @@ const DEFAULT_SETTINGS = {
 const elements = {
     enableHistory: document.getElementById('enableHistory'),
     theme: document.getElementsByName('theme'),
-    popupShortcut: document.getElementById('popupShortcut'),
-    inlineShortcut: document.getElementById('inlineShortcut'),
-    recordPopupShortcut: document.getElementById('recordPopupShortcut'),
-    recordInlineShortcut: document.getElementById('recordInlineShortcut'),
     saveSettings: document.getElementById('saveSettings'),
     resetSettings: document.getElementById('resetSettings')
 };
@@ -68,8 +64,6 @@ async function loadSettings() {
 
     // Update form elements with stored settings
     elements.enableHistory.checked = settings.enableHistory;
-    elements.popupShortcut.value = settings.shortcuts.popup;
-    elements.inlineShortcut.value = settings.shortcuts.inline;
     
     // Set theme radio button
     document.querySelector(`input[name="theme"][value="${settings.theme}"]`).checked = true;
@@ -123,30 +117,6 @@ function showSaveConfirmation(message = 'Settings saved successfully') {
     setTimeout(() => toast.remove(), 3000);
 }
 
-// Record keyboard shortcuts
-function startRecordingShortcut(inputElement) {
-    inputElement.value = 'Press keys...';
-    
-    const keyHandler = (e) => {
-        e.preventDefault();
-        
-        const keys = [];
-        if (e.ctrlKey) keys.push('Ctrl');
-        if (e.altKey) keys.push('Alt');
-        if (e.shiftKey) keys.push('Shift');
-        if (e.key !== 'Control' && e.key !== 'Alt' && e.key !== 'Shift') {
-            keys.push(e.key.toUpperCase());
-        }
-        
-        inputElement.value = keys.join('+');
-        
-        // Stop recording after key combination is pressed
-        document.removeEventListener('keydown', keyHandler);
-    };
-    
-    document.addEventListener('keydown', keyHandler);
-}
-
 // Apply theme to all extension pages
 async function applyTheme(theme) {
     // Set theme for current page
@@ -185,5 +155,9 @@ document.addEventListener('DOMContentLoaded', () => {
 // Event listeners
 elements.saveSettings.addEventListener('click', saveSettings);
 elements.resetSettings.addEventListener('click', resetSettings);
-elements.recordPopupShortcut.addEventListener('click', () => startRecordingShortcut(elements.popupShortcut));
-elements.recordInlineShortcut.addEventListener('click', () => startRecordingShortcut(elements.inlineShortcut));
+
+// Remove shortcut recording functionality
+document.addEventListener('DOMContentLoaded', async () => {
+    const shortcutElements = document.querySelectorAll('[id$="Shortcut"]');
+    shortcutElements.forEach(el => el.parentElement?.remove());
+});
