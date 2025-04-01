@@ -275,3 +275,5 @@ Provide a summary of any additional integration steps or final testing instructi
 8. Improvement: In settings.html, for each category, let user pick a pair of "From Unit" and "To Unit". When user selects a category in popup and inline conversion, autopopulate the from and to unit according to the category's saved setting. 
 
 9. Improvement: hide the Keyboard shortcuts section in settings.html and everywhere else it is referenced. Be thorough
+
+10. Improvement: Add an "About" icon next to the "Setting" icon in the popup. Upon click, the icon should open to https://geraldnguyen.medium.com/

@@ -228,6 +228,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Clear history button handler
     clearHistoryBtn.addEventListener('click', clearHistory);
+
+    // About button handler
+    document.getElementById('aboutBtn').addEventListener('click', () => {
+        chrome.tabs.create({ url: 'https://geraldnguyen.medium.com/' });
+    });
 });
 
 // Load and apply theme on popup open
