@@ -271,3 +271,5 @@ Provide a summary of any additional integration steps or final testing instructi
 6. Bug: 100000 is formatted as 1
 
 7. Bug: "Default From Unit" and "Default To Unit" not used in popup and inline conversion.
+
+8. Improvement: In settings.html, for each category, let user pick a pair of "From Unit" and "To Unit". When user selects a category in popup and inline conversion, autopopulate the from and to unit according to the category's saved setting. 

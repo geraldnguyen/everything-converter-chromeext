@@ -7,7 +7,7 @@ import {
     saveToHistoryIfEnabled 
 } from './conversion-core.js';
 
-// Populate unit dropdowns based on selected category
+// Update populateUnitDropdowns function
 async function populateUnitDropdowns(units) {
     if (!Array.isArray(units)) {
         console.error('Invalid units array:', units);
@@ -15,18 +15,21 @@ async function populateUnitDropdowns(units) {
     }
 
     const settings = await chrome.storage.sync.get(defaultSettings);
+    const category = categorySelect.value;
+    // Add fallback for categoryDefaults
+    const categoryDefaults = settings.categoryDefaults?.[category] || { from: units[0], to: units[1] };
+
     const fromUnit = document.getElementById('fromUnit');
     const toUnit = document.getElementById('toUnit');
     
     [fromUnit, toUnit].forEach((select, index) => {
         const currentValue = select.value;
-        const defaultValue = index === 0 ? settings.defaultFromUnit : settings.defaultToUnit;
+        const defaultValue = index === 0 ? categoryDefaults.from : categoryDefaults.to;
         
         select.innerHTML = units.map(unit => 
             `<option value="${unit}">${unit}</option>`
         ).join('');
         
-        // Try to keep current selection, fall back to default, then first unit
         select.value = units.includes(currentValue) ? currentValue : 
                       units.includes(defaultValue) ? defaultValue : 
                       units[0] || '';
@@ -106,14 +109,18 @@ function updateHistoryDisplay() {
 }
 
 // Populate form with historical conversion
-function populateFromHistory(conversion) {
+async function populateFromHistory(conversion) {
     const categorySelect = document.getElementById('categorySelect');
     const valueInput = document.getElementById('valueInput');
     const fromUnit = document.getElementById('fromUnit');
     const toUnit = document.getElementById('toUnit');
 
     categorySelect.value = conversion.category;
-    populateUnitDropdowns(conversion.category);
+    // Get units for the category before populating dropdowns
+    const units = getUnitsForCategory(conversion.category);
+    await populateUnitDropdowns(units);
+    
+    // Set values after dropdowns are populated
     valueInput.value = conversion.value;
     fromUnit.value = conversion.fromUnit;
     toUnit.value = conversion.toUnit;

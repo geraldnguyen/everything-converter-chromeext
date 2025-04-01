@@ -1,23 +1,21 @@
-import { getUnitsForCategory } from './conversion-core.js';
+import { getUnitsForCategory, unitCategoryMap } from './conversion-core.js';
 
-// Default settings
+// Default settings structure
 const DEFAULT_SETTINGS = {
-    defaultCategory: 'length',
-    defaultFromUnit: 'm',
-    defaultToUnit: 'ft',
     enableHistory: true,
     theme: 'light',
-    shortcuts: {
-        popup: 'Ctrl+Shift+C',
-        inline: 'Alt+C'
+    categoryDefaults: {
+        length: { from: 'm', to: 'ft' },
+        weight: { from: 'kg', to: 'lb' },
+        temperature: { from: '°C', to: '°F' },
+        volume: { from: 'l', to: 'gal' },
+        speed: { from: 'km/h', to: 'mph' },
+        area: { from: 'm²', to: 'ft²' }
     }
 };
 
 // Cache DOM elements
 const elements = {
-    defaultCategory: document.getElementById('defaultCategory'),
-    defaultFromUnit: document.getElementById('defaultFromUnit'),
-    defaultToUnit: document.getElementById('defaultToUnit'),
     enableHistory: document.getElementById('enableHistory'),
     theme: document.getElementsByName('theme'),
     popupShortcut: document.getElementById('popupShortcut'),
@@ -28,15 +26,47 @@ const elements = {
     resetSettings: document.getElementById('resetSettings')
 };
 
+// Initialize category defaults
+function initializeCategoryDefaults() {
+    const container = document.getElementById('categoryDefaults');
+    container.innerHTML = ''; // Clear existing content
+
+    Object.entries(unitCategoryMap).forEach(([category, units]) => {
+        const categoryDiv = document.createElement('div');
+        categoryDiv.className = 'category-defaults';
+        categoryDiv.dataset.category = category;
+
+        categoryDiv.innerHTML = `
+            <h3>${category.charAt(0).toUpperCase() + category.slice(1)}</h3>
+            <div class="unit-pair">
+                <select class="default-from" data-category="${category}">
+                    ${units.map(unit => `<option value="${unit}">${unit}</option>`).join('')}
+                </select>
+                <span>→</span>
+                <select class="default-to" data-category="${category}">
+                    ${units.map(unit => `<option value="${unit}">${unit}</option>`).join('')}
+                </select>
+            </div>
+        `;
+
+        container.appendChild(categoryDiv);
+    });
+}
+
 // Load settings from storage
 async function loadSettings() {
     const settings = await chrome.storage.sync.get(DEFAULT_SETTINGS);
     
+    // Load category defaults
+    Object.entries(settings.categoryDefaults).forEach(([category, defaults]) => {
+        const categoryDiv = document.querySelector(`[data-category="${category}"]`);
+        if (categoryDiv) {
+            categoryDiv.querySelector('.default-from').value = defaults.from;
+            categoryDiv.querySelector('.default-to').value = defaults.to;
+        }
+    });
+
     // Update form elements with stored settings
-    elements.defaultCategory.value = settings.defaultCategory;
-    await updateUnitDropdowns(settings.defaultCategory);
-    elements.defaultFromUnit.value = settings.defaultFromUnit;
-    elements.defaultToUnit.value = settings.defaultToUnit;
     elements.enableHistory.checked = settings.enableHistory;
     elements.popupShortcut.value = settings.shortcuts.popup;
     elements.inlineShortcut.value = settings.shortcuts.inline;
@@ -45,29 +75,21 @@ async function loadSettings() {
     document.querySelector(`input[name="theme"][value="${settings.theme}"]`).checked = true;
 }
 
-// Update unit dropdowns when category changes
-async function updateUnitDropdowns(category) {
-    const units = getUnitsForCategory(category);
-    
-    [elements.defaultFromUnit, elements.defaultToUnit].forEach(select => {
-        select.innerHTML = units.map(unit => 
-            `<option value="${unit}">${unit}</option>`
-        ).join('');
-    });
-}
-
 // Save settings to storage
 async function saveSettings() {
+    const categoryDefaults = {};
+    document.querySelectorAll('.category-defaults').forEach(div => {
+        const category = div.dataset.category;
+        categoryDefaults[category] = {
+            from: div.querySelector('.default-from').value,
+            to: div.querySelector('.default-to').value
+        };
+    });
+
     const settings = {
-        defaultCategory: elements.defaultCategory.value,
-        defaultFromUnit: elements.defaultFromUnit.value,
-        defaultToUnit: elements.defaultToUnit.value,
         enableHistory: elements.enableHistory.checked,
         theme: document.querySelector('input[name="theme"]:checked').value,
-        shortcuts: {
-            popup: elements.popupShortcut.value,
-            inline: elements.inlineShortcut.value
-        }
+        categoryDefaults
     };
 
     await chrome.storage.sync.set(settings);
@@ -154,9 +176,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelector(`input[name="theme"][value="${theme}"]`).checked = true;
 });
 
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    initializeCategoryDefaults();
+    loadSettings();
+});
+
 // Event listeners
-document.addEventListener('DOMContentLoaded', loadSettings);
-elements.defaultCategory.addEventListener('change', e => updateUnitDropdowns(e.target.value));
 elements.saveSettings.addEventListener('click', saveSettings);
 elements.resetSettings.addEventListener('click', resetSettings);
 elements.recordPopupShortcut.addEventListener('click', () => startRecordingShortcut(elements.popupShortcut));

@@ -70,7 +70,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
                 category,
                 fromUnit: unit,
                 toUnit: targetUnit,
-                result: convertedValue,
+                result: result,  // Fixed: use result instead of convertedValue
                 source: 'inline'
             });
 
@@ -110,10 +110,14 @@ function parseSelection(text) {
 async function showUnitSelectionPopup(tabId, units, currentUnit) {
     // Get default settings
     const settings = await chrome.storage.sync.get(defaultSettings);
+    const category = unitToCategoryMap[currentUnit];
+    
+    // Get the default target unit for this category
+    const defaultTargetUnit = settings.categoryDefaults?.[category]?.to || units[0];
     
     // Filter out the current unit
     const availableUnits = units.filter(u => u !== currentUnit);
-    
+
     // Inject popup CSS
     await chrome.scripting.insertCSS({
         target: { tabId },
@@ -132,7 +136,7 @@ async function showUnitSelectionPopup(tabId, units, currentUnit) {
         `
     });
 
-    // Execute script and get result
+    // Execute script with serializable arguments
     const results = await chrome.scripting.executeScript({
         target: { tabId },
         function: (units, defaultUnit) => {
@@ -162,7 +166,7 @@ async function showUnitSelectionPopup(tabId, units, currentUnit) {
                 };
             });
         },
-        args: [availableUnits, settings.defaultToUnit]
+        args: [availableUnits, defaultTargetUnit] // Pass only serializable values
     });
 
     return results[0].result;
@@ -216,4 +220,19 @@ async function showError(tabId, message) {
         },
         args: [message]
     });
+}
+
+async function getDefaultTargetUnit(category, currentUnit) {
+    const settings = await chrome.storage.sync.get(DEFAULT_SETTINGS);
+    const categoryDefaults = settings.categoryDefaults[category];
+    
+    // If current unit is the default 'from', use default 'to'
+    if (categoryDefaults && currentUnit === categoryDefaults.from) {
+        return categoryDefaults.to;
+    }
+    
+    // Otherwise use default 'to' unit if different from current
+    return (categoryDefaults && categoryDefaults.to !== currentUnit) 
+        ? categoryDefaults.to 
+        : null;
 }

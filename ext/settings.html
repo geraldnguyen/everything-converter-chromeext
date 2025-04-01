@@ -64,6 +64,34 @@
             align-items: center;
             gap: 10px;
         }
+
+        .category-defaults {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f8f8;
+            border-radius: 4px;
+        }
+
+        .unit-pair {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .unit-pair select {
+            width: 120px;
+        }
+
+        .unit-pair span {
+            color: #666;
+            font-weight: bold;
+        }
+
+        h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.1rem;
+            color: #333;
+        }
     </style>
 </head>
 <body>
@@ -72,29 +100,26 @@
     <section id="generalSettings">
         <h2>General Settings</h2>
         <div class="setting-group">
-            <label for="defaultCategory">Default Category:</label>
-            <select id="defaultCategory">
-                <option value="length">Length</option>
-                <option value="weight">Weight</option>
-                <option value="temperature">Temperature</option>
-                <option value="volume">Volume</option>
-                <option value="speed">Speed</option>
-                <option value="area">Area</option>
-            </select>
-        </div>
-        <div class="setting-group">
-            <label for="defaultFromUnit">Default From Unit:</label>
-            <select id="defaultFromUnit"></select>
-        </div>
-        <div class="setting-group">
-            <label for="defaultToUnit">Default To Unit:</label>
-            <select id="defaultToUnit"></select>
-        </div>
-        <div class="setting-group">
             <label>
                 <input type="checkbox" id="enableHistory" checked>
                 Enable conversion history
             </label>
+        </div>
+    </section>
+
+    <section id="defaultUnitsSettings">
+        <h2>Default Units</h2>
+        <div id="categoryDefaults">
+            <!-- Template for each category -->
+            <div class="category-defaults" data-category="length">
+                <h3>Length</h3>
+                <div class="unit-pair">
+                    <select class="default-from"></select>
+                    <span>→</span>
+                    <select class="default-to"></select>
+                </div>
+            </div>
+            <!-- Repeated for other categories -->
         </div>
     </section>
 

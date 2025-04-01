@@ -182,13 +182,15 @@ export const unitCategoryMap = {
 
 export const defaultSettings = {
     defaultCategory: 'length',
-    defaultFromUnit: 'm',
-    defaultToUnit: 'ft',
     enableHistory: true,
     theme: 'light',
-    shortcuts: {
-        popup: 'Ctrl+Shift+C',
-        inline: 'Alt+C'
+    categoryDefaults: {
+        length: { from: 'm', to: 'ft' },
+        weight: { from: 'kg', to: 'lb' },
+        temperature: { from: '°C', to: '°F' },
+        volume: { from: 'l', to: 'gal' },
+        speed: { from: 'km/h', to: 'mph' },
+        area: { from: 'm²', to: 'ft²' }
     }
 };
 
