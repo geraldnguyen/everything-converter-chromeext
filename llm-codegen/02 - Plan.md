@@ -277,3 +277,5 @@ Provide a summary of any additional integration steps or final testing instructi
 9. Improvement: hide the Keyboard shortcuts section in settings.html and everywhere else it is referenced. Be thorough
 
 10. Improvement: Add an "About" icon next to the "Setting" icon in the popup. Upon click, the icon should open to https://geraldnguyen.medium.com/
+
+11. Improvement: Generate a simple privacy policy that declare the extension does not collect any user information. Save the policy into a privacy-policy.md file
